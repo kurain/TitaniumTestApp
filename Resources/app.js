@@ -26,6 +26,18 @@ function updateTimeline (timeline) {
                 layout: 'absolute'
             }
         );
+
+        var imageView = Ti.UI.createImageView(
+            {
+                image: tweet.user.profile_image_url,
+                width: 48,
+                height: 48,
+                top: 5,
+                left: 5
+            }
+        );
+        row.add(imageView);
+
         var nameLabel = Ti.UI.createLabel(
             {
                 width: 120,
@@ -64,16 +76,6 @@ function updateTimeline (timeline) {
         dateLabel.text = tweet.created_at;
         row.add(dateLabel);
 
-        var imageView = Ti.UI.createImageView(
-            {
-                image: tweet.user.profile_image_url,
-                width: 48,
-                height: 48,
-                top: 5,
-                left: 5
-            }
-        );
-        row.add(imageView);
         //変更終わり
         currentData.push(row);
     }
