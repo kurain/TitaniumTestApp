@@ -19,17 +19,18 @@ function updateTimeline (timeline) {
     var currentData = [];
     for (var i=0;i<timeline.length;i++) {
         var tweet = timeline[i];
-        //ここから変更開始
+        //再度ここから変更開始
         var row = Ti.UI.createTableViewRow(
             {
                 height: 150,
-                layout: 'absolute'
+                layout: 'vertical'
             }
         );
 
         var imageView = Ti.UI.createImageView(
             {
-                image: tweet.user.profile_image_url,
+                image: 'iphone/appicon.png',
+                //ファイル名はプロジェクトのResorcesフォルダからの相対パス
                 width: 48,
                 height: 48,
                 top: 5,
@@ -43,7 +44,7 @@ function updateTimeline (timeline) {
                 width: 120,
                 height: 12,
                 left: 58,
-                top: 5,
+                top: -48,
                 fontSize: 6,
                 fontWeight: 'bold',
                 color: '#2b4771'
@@ -56,7 +57,7 @@ function updateTimeline (timeline) {
             {
                 width: 257,
                 left: 58,
-                top: 18,
+                top: 1,
                 height: 100,
                 fontSize: 8
             }
@@ -69,7 +70,7 @@ function updateTimeline (timeline) {
                 width: 200,
                 height: 12,
                 left: 58,
-                bottom: 8,
+                top: 5,
                 fontSize: 6
             }
         );
