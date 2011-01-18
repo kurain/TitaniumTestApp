@@ -1,4 +1,25 @@
 var win1 = Ti.UI.currentWindow;
+
+var messageButton = Ti.UI.createButton(
+    {
+	    systemButton: Titanium.UI.iPhone.SystemButton.ADD
+    }
+);
+messageButton.addEventListener(
+    'click',
+    function () {
+        var messageWindow = Ti.UI.createWindow(
+            {
+                url: 'message_window.js',
+                title: 'message',
+                backgroundColor: '#fff'
+            }
+        );
+        messageWindow.open();
+    }
+);
+win1.rightNavButton = messageButton;
+
 var data = [];
 var tableView = Ti.UI.createTableView({
     data:data
@@ -73,7 +94,7 @@ function updateTimeline (timeline) {
 }
 
 var xhr = Ti.Network.createHTTPClient();
-var user = 'hatenatech';
+var user = 'kurain';
 var url = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + user;
 xhr.open('GET', url);
 xhr.onload = function() {
