@@ -61,6 +61,7 @@ postButton.addEventListener(
     function () {
         if ( textArea.value ) {
             tweet( textArea.value );
+            win.close({animated:true});
         }
     }
 );

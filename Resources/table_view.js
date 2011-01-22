@@ -15,6 +15,7 @@ messageButton.addEventListener(
                 backgroundColor: '#fff'
             }
         );
+        //Ti.UI.currentTab.open(messageWindow);
         messageWindow.open();
     }
 );
@@ -29,7 +30,6 @@ function updateTimeline (timeline) {
     var currentData = [];
     for (var i=0;i<timeline.length;i++) {
         var tweet = timeline[i];
-        //再度ここから変更開始
         var row = Ti.UI.createTableViewRow(
             {
                 height: 'auto',
@@ -87,11 +87,26 @@ function updateTimeline (timeline) {
         dateLabel.text = tweet.created_at;
         row.add(dateLabel);
 
-        //変更終わり
         currentData.push(row);
     }
     tableView.setData(currentData);
+
+    tableView.addEventListener(
+        'click',
+        function(e) {
+            var tweet = timeline[e.index];
+            var webWindow = Ti.UI.createWindow(
+                {
+                    url: 'tweet_window.js',
+                    status_id: tweet.id_str,
+                    screen_name: tweet.user.screen_name
+                }
+            );
+            Ti.UI.currentTab.open(webWindow);
+        }
+    );
 }
+
 
 var xhr = Ti.Network.createHTTPClient();
 var user = 'kurain';
