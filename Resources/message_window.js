@@ -1,7 +1,7 @@
 var win = Ti.UI.currentWindow;
 var textArea = Ti.UI.createTextArea(
     {
-        height:150,
+        height:140,
         width:300,
         top:10,
         font:{fontSize:20},
@@ -14,7 +14,7 @@ var textArea = Ti.UI.createTextArea(
 win.add(textArea);
 var postButton = Ti.UI.createButton(
     {
-        top: 170,
+        top: 160,
         right: 10,
         width: 100,
         height: 44,
@@ -22,47 +22,35 @@ var postButton = Ti.UI.createButton(
     }
 );
 
-Ti.include('lib/oauth_adapter.js');
-var oAuthAdapter = new OAuthAdapter(
-    'LvIutOsRgDH0HAV4D1wKE8hRGCAFEow2iCEHpZy4uwQ',
-    'ekrL8X8sy8WiSDrpsUImQ',
-    'HMAC-SHA1'
-);
-oAuthAdapter.loadAccessToken('twitter');
-
+Ti.include("lib/twitter_api.js");
+//initialization
+Ti.App.twitterApi = new TwitterApi({
+    consumerKey:'ekrL8X8sy8WiSDrpsUImQ',
+    consumerSecret:'LvIutOsRgDH0HAV4D1wKE8hRGCAFEow2iCEHpZy4uwQ'
+});
+var twitterApi = Ti.App.twitterApi;
+twitterApi.init(); 
 
 var latitude;
 var longitude;
 function tweet(message) {
-    var messageData = [['status', message]];
-    if ( latitude && longitude ) {
-        messsageData.push(['lat',latitude]);
-        messsageData.push(['long',longitude]);
+    var params = {status: message};
+    if (latitude && longitude) {
+        params['lat']  = latitude;
+        params['long'] = longitude;
     }
-
-    oAuthAdapter.send(
-        'https://api.twitter.com/1/statuses/update.json',
-        messageData,
-        'Twitter', //アラートのタイトル
-        'Published.', //成功したときのアラートメッセージ
-        'Not published.' //失敗したときのアラートメッセージ
+    twitterApi.statuses_update(
+        {
+            onSuccess: function(responce){
+                alert('tweet success');
+                Ti.API.info(responce);
+            },
+            onError: function(error){
+                Ti.API.error(error);
+            },
+            parameters:params
+        }
     );
-
-    if (oAuthAdapter.isAuthorized() == false) {
-        var receivePin = function() {
-            oAuthAdapter.getAccessToken(
-                'https://api.twitter.com/oauth/access_token'
-            );
-            oAuthAdapter.saveAccessToken('twitter');
-        };
-        oAuthAdapter.showAuthorizeUI(
-            'https://api.twitter.com/oauth/authorize?' +
-                oAuthAdapter.getRequestToken(
-                    'https://api.twitter.com/oauth/request_token'
-                ),
-            receivePin
-        );
-    }
 }
 
 postButton.addEventListener(
@@ -131,7 +119,7 @@ function setCurrentPosition () {
 
 var locationButton = Ti.UI.createButton(
     {
-        top: 170,
+        top: 160,
         left: 10,
         width: 100,
         height: 44,

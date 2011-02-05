@@ -15,8 +15,8 @@ messageButton.addEventListener(
                 backgroundColor: '#fff'
             }
         );
-        //Ti.UI.currentTab.open(messageWindow);
-        messageWindow.open();
+        Ti.UI.currentTab.open(messageWindow);
+        //messageWindow.open();
     }
 );
 win1.rightNavButton = messageButton;
