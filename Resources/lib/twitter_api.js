@@ -353,7 +353,7 @@ var TwitterApi = function(params){
 
   //account/verify_credentials
   this.account_verify_credentials = function(params){
-    params.url = 'http://api.twitter.com/version/account/verify_credentials.json';
+    params.url = 'https://api.twitter.com/1/account/verify_credentials.json';
     params.method = 'GET';
     return self.callApi(params);
   };

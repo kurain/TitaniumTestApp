@@ -452,4 +452,24 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
         return null;
     };
     this.send = send;
+
+    this.echoOAuthHeader = function (params) {
+        this.loadAccessToken('twitter');
+        var pUrl            = params.url;
+        var pMethod         = params.method || "POST";
+        var message = createMessage(pUrl, pMethod);
+
+        accessor.tokenSecret = accessTokenSecret;
+        message.parameters.push(['oauth_token', accessToken]);
+
+        OAuth.setTimestampAndNonce(message);
+        OAuth.SignatureMethod.sign(message, accessor);
+
+        var parameterMap = OAuth.getParameterMap(message.parameters);
+        var oAuthHeaderElms = [];
+        for (var p in parameterMap) {
+           oAuthHeaderElms.push( encodeURIComponent(p) + "=" + encodeURIComponent(parameterMap[p]) );
+        }
+        return 'OAuth ' + oAuthHeaderElms.sort().join(', ');
+    };
 };
