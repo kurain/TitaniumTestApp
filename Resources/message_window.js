@@ -150,7 +150,7 @@ function selectFromPhotoGallery() {
                 var image = event.media;
                 imageView.image = image;
                 imageView.show();
-                uploadToTwtiPick(image);
+                uploadToTwitPic(image);
              },
             // error:  function(error) { },
             // cancel: function() { },
@@ -167,7 +167,7 @@ function startCamera() {
 		        var image = event.media;
                 imageView.image = image;
                 imageView.show();
-                uploadToTwtiPick(image);
+                uploadToTwitPic(image);
 		    },
 	        //cancel:function(){},
 	        error:function(error) {
@@ -218,7 +218,7 @@ photoButton.addEventListener(
 );
 win.add(photoButton);
 
-function uploadToTwtiPick(image) {
+function uploadToTwitPic(image) {
     var xhr = Ti.Network.createHTTPClient();
 
     var verifyURL = 'https://api.twitter.com/1/account/verify_credentials.json';
@@ -226,9 +226,7 @@ function uploadToTwtiPick(image) {
         url:verifyURL,
         method: 'GET'
     };
-    var header = twitterApi.oAuthAdapter.echoOAuthHeader(params);
-
-    Ti.API.debug('header: ' + header);
+    var header = twitterApi.oAuthAdapter.createOAuthHeader(params);
 
     xhr.onload = function(){
         Ti.API.debug('status: ' + this.status);
@@ -247,7 +245,7 @@ function uploadToTwtiPick(image) {
 
     xhr.send(
         {
-            key: 'YOUR TWITPIC API KEY',
+            key: 'YOUR_TWITPIC_API_KEY',
             message: textArea.value,
             media: image
         }
@@ -261,7 +259,7 @@ function verifyTwitter (){
         url:verifyURL,
         method: 'GET'
     };
-    var header = twitterApi.oAuthAdapter.echoOAuthHeader(params);
+    var header = twitterApi.oAuthAdapter.createOAuthHeader(params);
 
     Ti.API.debug('URL: ' + verifyURL);
     Ti.API.debug('header: ' + header);

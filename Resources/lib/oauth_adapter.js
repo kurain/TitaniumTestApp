@@ -453,7 +453,7 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
     };
     this.send = send;
 
-    this.echoOAuthHeader = function (params) {
+    this.createOAuthHeader = function (params) {
         this.loadAccessToken('twitter');
         var pUrl            = params.url;
         var pMethod         = params.method || "POST";
