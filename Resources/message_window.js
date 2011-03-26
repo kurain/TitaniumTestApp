@@ -1,4 +1,5 @@
 var win = Ti.UI.currentWindow;
+
 var textArea = Ti.UI.createTextArea(
     {
         height:140,
@@ -16,7 +17,7 @@ var postButton = Ti.UI.createButton(
     {
         top: 160,
         right: 10,
-        width: 100,
+        width: 60,
         height: 44,
         title: 'POST'
     }
@@ -25,8 +26,8 @@ var postButton = Ti.UI.createButton(
 Ti.include("lib/twitter_api.js");
 //initialization
 Ti.App.twitterApi = new TwitterApi({
-    consumerKey:'YOUR CONSUMER KEY',
-    consumerSecret:'YOUR CONSUMER SECRET'
+    consumerKey:'0C1bKC84Q3ZpIGsZLSu7A',
+    consumerSecret:'XfuEkOgtdqN42k7WDEHkoclsXZE263mKpckIxS4E'
 });
 var twitterApi = Ti.App.twitterApi;
 twitterApi.init(); 
@@ -277,3 +278,141 @@ function verifyTwitter (){
     xhr.setRequestHeader('Authorization', header);
     xhr.send();
 }
+
+Titanium.Gesture.addEventListener(
+    'shake',
+    function(){
+        var alertDialog = Titanium.UI.createAlertDialog(
+            {
+                title: '入力をキャンセルしますか?',
+                buttonNames: ['入力をキャンセル', '編集を続行'],
+                cancel: 1
+            }
+        );
+        alertDialog.addEventListener(
+            'click',
+            function(e) {
+                if (e.index == 10) {
+                    win.close();
+                }
+            }
+        );
+        alertDialog.show();
+    }
+);
+
+
+function postByAccelerometer(e) {
+    if ( Math.abs(e.z) > 1.1 ) {
+        tweet('iPhoneに触られた!');
+        accEnabled = false;            
+        Ti.Accelerometer.removeEventListener('update',postByAccelerometer);
+    }
+}
+
+var accEnabled = false;
+var accButton = Ti.UI.createButton(
+    {
+        top: 160,
+        left: 190,
+        width: 44,
+        height: 44,
+        title: 'Acc'
+    }
+);
+accButton.addEventListener(
+    'click',
+    function () {
+        if (accEnabled) {
+            alert('無効にします');
+            accEnabled = false;            
+            Ti.Accelerometer.removeEventListener('update',postByAccelerometer);
+        } else {
+            alert('有効にします');
+            accEnabled = true;
+            Ti.Accelerometer.addEventListener('update',postByAccelerometer);
+        }
+    }
+);
+win.add(accButton);
+
+// win.addEventListener(
+//     'close',
+//     function(){
+//         var text = textArea.value;
+//         Ti.App.Properties.setString('previousText', text);
+
+//         if (mapview.visible) {
+//             var loc = mapview.location;
+//             var locationList =
+//                 [loc.latitude,loc.longitude,loc.latitudeDelta,loc.longitudeDelta];
+//             Ti.App.Properties.setList('locationList', locationList);
+//         }
+//     }
+// );
+
+// win.addEventListener(
+//     'open',
+//     function(){
+//         var text = Ti.App.Properties.getString('previousText');
+//         if ( text ) {
+//             textArea.value = text;
+//         }
+//         if ( Ti.App.Properties.hasProperty('locationList') ) {
+//             var locationList = Ti.App.Properties.getList('locationList');
+//             mapview.show();
+//             mapview.setLocation(
+//                 {
+//                     latitude : locationList[0],
+//                     longitude : locationList[1],
+//                     latitudeDelta : locationList[2],
+//                     longitudeDelta : locationList[3]              
+//                 }
+//             );
+//         }
+//     }
+// );
+
+var fileName = 'tweet.txt';
+win.addEventListener(
+    'close',
+    function(){
+        var text = textArea.value;
+        var loc;
+        if (mapview.visible) {
+            loc = mapview.location;
+        }
+        var json = JSON.stringify({previousText:text,location:loc});
+        var file  = Ti.Filesystem.getFile(
+            Titanium.Filesystem.resourcesDirectory + '/' + fileName
+        );
+        file.write(json);
+    }
+);
+
+win.addEventListener(
+    'open',
+    function(){
+        var file  = Ti.Filesystem.getFile(
+            Titanium.Filesystem.resourcesDirectory + '/' + fileName
+        );
+        var json = file.read();
+        if ( !json || json.length <= 0) {
+            return;
+        }
+        var data = JSON.parse(json);
+        var text = data.previousText;
+        var location = data.location;
+        if ( text ) {
+            textArea.value = text;
+        }
+        if ( location ) {
+            var locationList = Ti.App.Properties.getList('locationList');
+            mapview.show();
+            mapview.setLocation(location);
+        }
+    }
+);
+
+
+
