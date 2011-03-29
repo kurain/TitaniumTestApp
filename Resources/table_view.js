@@ -40,7 +40,6 @@ function updateTimeline (timeline) {
         var imageView = Ti.UI.createImageView(
             {
                 image: tweet.user.profile_image_url,
-                //ファイル名はプロジェクトのResorcesフォルダからの相対パス
                 width: 48,
                 height: 48,
                 top: 5,
@@ -107,15 +106,68 @@ function updateTimeline (timeline) {
     );
 }
 
+Ti.include("lib/twitter_api.js");
+Ti.include("twitter_settings.js");
+Ti.include("tweet_db.js");
+//initialization
+Ti.App.twitterApi = new TwitterApi({
+    consumerKey: TwitterSettings.consumerKey,
+    consumerSecret: TwitterSettings.consumerSecret
+});
+var twitterApi = Ti.App.twitterApi;
+twitterApi.init(); 
+var db = new TweetDB();
 
-var xhr = Ti.Network.createHTTPClient();
-var user = 'kurain';
-var url = "http://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + user;
-xhr.open('GET', url);
-xhr.onload = function() {
-    var timeline = JSON.parse(this.responseText);
-    updateTimeline(timeline);
-};
-xhr.send();
 
+twitterApi.statuses_home_timeline(
+    {
+        onSuccess: function(response){
+            db.addTweets(response);
+            updateTimeline(db.getSavedTweets());
+        },
+        onError: function(error){
+            Ti.API.error(error);
+        }
+    }
+);
 win1.add(tableView);
+
+var search = Titanium.UI.createSearchBar({
+	height:43,
+	top:0
+});
+win1.add(search);
+
+search.addEventListener('return', function(e)
+{
+	var query = e.value;
+    var res = db.searchByScreenName(query);
+    if (res) {
+        updateTimeline(res);
+    }
+	search.blur();
+    search.hide();
+});
+
+search.addEventListener('change', function(e)
+{
+    if (e.value.length == 0 ) {
+        updateTimeline(db.savedTweets());
+	    search.blur();
+        search.hide();
+    }
+});
+search.hide();
+
+var searchButton = Ti.UI.createButton(
+    {
+        title: 'search'
+    }
+);
+searchButton.addEventListener(
+    'click',
+    function () {
+        search.show();
+    }
+);
+win1.leftNavButton = searchButton;

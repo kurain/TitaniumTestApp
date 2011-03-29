@@ -1,0 +1,1 @@
+{"previousText":"Aaa","location":{"longitudeDelta":0.01,"longitude":135.762451171875,"latitude":35.01087188720703,"latitudeDelta":0.01}}
