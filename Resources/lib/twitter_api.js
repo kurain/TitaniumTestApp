@@ -21,11 +21,20 @@ var TwitterApi = function(params){
     if (oAuthAdapter.isAuthorized() == false) 
     {
       var receivePin = function() {
-        oAuthAdapter.getAccessToken('https://api.twitter.com/oauth/access_token'); 
-        oAuthAdapter.saveAccessToken('twitter');
+        Ti.API.debug('receivePin');
+        oAuthAdapter.getAccessToken({pURL:'https://api.twitter.com/oauth/access_token'}); 
+        //oAuthAdapter.saveAccessToken('twitter');
       };
-      oAuthAdapter.showAuthorizeUI('https://api.twitter.com/oauth/authorize?' +
-      oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token'), receivePin);
+
+      oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token');
+      var timer_id;
+      var authorize = function() {
+          if ( oAuthAdapter.returnToken() ) {
+              clearInterval(timer_id);
+              oAuthAdapter.showAuthorizeUI('https://api.twitter.com/oauth/authorize?' + oAuthAdapter.returnToken(), receivePin);
+          }
+      };
+      timer_id = setInterval(authorize ,100);
     }
   };
   this.callApi = function(params){

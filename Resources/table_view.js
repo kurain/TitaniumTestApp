@@ -118,18 +118,25 @@ var twitterApi = Ti.App.twitterApi;
 twitterApi.init(); 
 var db = new TweetDB();
 
-
-twitterApi.statuses_home_timeline(
-    {
-        onSuccess: function(response){
-            db.addTweets(response);
-            updateTimeline(db.getSavedTweets());
-        },
-        onError: function(error){
-            Ti.API.error(error);
-        }
+function getTimeLine() {
+    if ( twitterApi.oAuthAdapter.isAuthorized() ) {
+        twitterApi.statuses_home_timeline(
+            {
+                onSuccess: function(response){
+                    db.addTweets(response);
+                    updateTimeline(db.getSavedTweets());
+                },
+                onError: function(error){
+                    Ti.API.error(error);
+                }
+            }
+        );
+    } else {
+        setTimeout( getTimeLine, 100);
     }
-);
+}
+getTimeLine();
+
 win1.add(tableView);
 
 var search = Titanium.UI.createSearchBar({
