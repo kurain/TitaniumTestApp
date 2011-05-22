@@ -135,8 +135,7 @@ function getTimeLine() {
         setTimeout( getTimeLine, 100);
     }
 }
-getTimeLine();
-
+// getTimeLine();
 win1.add(tableView);
 
 var search = Titanium.UI.createSearchBar({

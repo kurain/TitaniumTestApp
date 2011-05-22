@@ -16,6 +16,7 @@ var TwitterApi = function(params){
 
   // get AccessToken. Show OAuth UI for user if needs.
   this.init = function(params){
+    Ti.API.debug('twitter api init');
     var oAuthAdapter = this.oAuthAdapter;
     oAuthAdapter.loadAccessToken('twitter');
     if (oAuthAdapter.isAuthorized() == false) 
@@ -28,13 +29,15 @@ var TwitterApi = function(params){
 
       oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token');
       var timer_id;
-      var authorize = function() {
+      var authorize = function() {          
           if ( oAuthAdapter.returnToken() ) {
               clearInterval(timer_id);
               oAuthAdapter.showAuthorizeUI('https://api.twitter.com/oauth/authorize?' + oAuthAdapter.returnToken(), receivePin);
+          } else {
+              Ti.API.debug('wait got token');
           }
       };
-      timer_id = setInterval(authorize ,100);
+      timer_id = setInterval(authorize ,1000);
     }
   };
   this.callApi = function(params){

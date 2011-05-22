@@ -77,6 +77,7 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod){
     // will hold the request token and access token returned by the service
     var requestToken = null;
     var requestTokenSecret = null;
+    var rawRequestToken = null;
     var accessToken = null;
     var accessTokenSecret = null;
 
@@ -236,25 +237,22 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod){
 				Ti.API.debug(client.status);
 				Ti.API.debug(client.responseData);
 				// Ti.API.debug(client.responseXML);
-				this.token =  client.responseText;
-				} catch(e){
-					alert(E);
-				}
+				rawRequestToken =  client.responseText;
+                Ti.API.debug('this.token' + rawRequestToken);
+			} catch(e){
+				alert(E);
+			}
 		};
 		
-		
-		        client.open('POST', finalUrl, false);
-				client.setTimeout(4000);
+        client.open('POST', finalUrl, false);
+		client.setTimeout(4000);
+        client.send();	
 				
-				
-				
-		        client.send();	
-				
-				this.token = client.responseText;      
     };
 
 	this.returnToken = function(){
-		return this.token;
+        Ti.API.debug('this.token' + rawRequestToken);
+		return rawRequestToken;
 	};
 
     // unloads the UI used to have the user authorize the application
@@ -347,6 +345,7 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod){
     };
 
     this.createWindow = function (){
+      Ti.API.debug('create window');
       var w = Ti.UI.createWindow({
         top: 0,
         // modal: true,
@@ -356,6 +355,7 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod){
       return w;
     };
     this.setupWindow = function(childContent){
+      Ti.API.debug('set up  window');
       if(null == window){
         window = this.createWindow();
       }
