@@ -1,7 +1,7 @@
 // Twitter API Wrapper
-Ti.include('lib/sha1.js');
-Ti.include('lib/oauth.js');
-Ti.include('lib/oauth_adapter.js');
+Ti.include(path_lib+'sha1.js');
+Ti.include(path_lib+'oauth.js');
+Ti.include(path_lib+'oauth_adapter.js');
 
 var TwitterApi = function(params){
   var self = this;
@@ -21,11 +21,15 @@ var TwitterApi = function(params){
     if (oAuthAdapter.isAuthorized() == false) 
     {
       var receivePin = function() {
-        oAuthAdapter.getAccessToken('https://api.twitter.com/oauth/access_token'); 
-        oAuthAdapter.saveAccessToken('twitter');
+        oAuthAdapter.getAccessToken('https://api.twitter.com/oauth/access_token', function(){
+          oAuthAdapter.saveAccessToken('twitter');
+        });
       };
-      oAuthAdapter.showAuthorizeUI('https://api.twitter.com/oauth/authorize?' +
-      oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token'), receivePin);
+      oAuthAdapter.getRequestToken('https://api.twitter.com/oauth/request_token', function(token){
+        if(token){
+          oAuthAdapter.showAuthorizeUI('https://api.twitter.com/oauth/authorize?' + token , receivePin);
+        }
+      });
     }
   };
   this.callApi = function(params){
@@ -68,16 +72,27 @@ var TwitterApi = function(params){
         response = JSON.parse(response);
         if (params && params.onSuccess){
           params.onSuccess(response);
+        }else{
+          Ti.API.error('no success handler');
         }
       },
       onError:function(error){
         if (params.onError){
           params.onError(error);
         }else{
+          Ti.API.error('no error handler');
           Ti.API.error(error);
         }
       }
     });
+  };
+
+  this.clear_accesstoken = function(){
+    self.oAuthAdapter.clearAccessToken('twitter');
+  };
+
+  this.clear_actionsqueue = function(){
+    self.oAuthAdapter.clearActionsQueue();
   };
 
   /**
