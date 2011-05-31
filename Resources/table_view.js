@@ -1,5 +1,4 @@
 var win1 = Ti.UI.currentWindow;
-
 // var messageButton = Ti.UI.createButton(
 //     {
 // 	    systemButton: Titanium.UI.iPhone.SystemButton.ADD
@@ -20,6 +19,7 @@ var win1 = Ti.UI.currentWindow;
 //     }
 // );
 // win1.rightNavButton = messageButton;
+
 
 var data = [];
 var tableView = Ti.UI.createTableView({
@@ -101,7 +101,7 @@ function updateTimeline (timeline) {
                     url: 'tweet_window.js',
                     status_id: tweet.status_id,
                     screen_name: tweet.user.screen_name,
-                    exitOnClose: false
+                    fullscreen:false
                 }
             );
             webWindow.open();
@@ -181,3 +181,4 @@ win1.add(tableView);
 //     }
 // );
 // win1.leftNavButton = searchButton;
+
