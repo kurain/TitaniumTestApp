@@ -94,14 +94,17 @@ function updateTimeline (timeline) {
         'click',
         function(e) {
             var tweet = timeline[e.index];
+            Ti.API.debug(tweet.user.screen_name);
+            Ti.API.debug(tweet.status_id);
             var webWindow = Ti.UI.createWindow(
                 {
                     url: 'tweet_window.js',
-                    status_id: tweet.id_str,
-                    screen_name: tweet.user.screen_name
+                    status_id: tweet.status_id,
+                    screen_name: tweet.user.screen_name,
+                    exitOnClose: false
                 }
             );
-            Ti.UI.currentTab.open(webWindow);
+            webWindow.open();
         }
     );
 }

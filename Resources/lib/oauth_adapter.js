@@ -467,6 +467,13 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
             }
           }
         };
+        client.open(pMethod,pUrl,false);
+        if ( pMethod == "GET" ) {
+            client.send();
+        } else {
+            client.send(parameterMap);
+        }
+
     };
     this.send = send;
 

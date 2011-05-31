@@ -27,6 +27,7 @@ var TweetDB = function() {
                 tweetObj.text = rows.fieldByName('tweet_text');
                 var date = new Date(rows.fieldByName('created_at'));
                 tweetObj.created_at = date.toLocaleString();
+                tweetObj.status_id = rows.fieldByName('status_id');
                 res.push(tweetObj);
                 rows.next();
             }
@@ -71,6 +72,7 @@ var TweetDB = function() {
                 var tweetObj = {};
                 tweetObj.user = {};
                 tweetObj.user.screen_name = rows.fieldByName('screen_name');
+                tweetObj.status_id = rows.fieldByName('status_id');
                 tweetObj.user.profile_image_url
                     = rows.fieldByName('profile_image_url');
                 tweetObj.text = rows.fieldByName('tweet_text');
