@@ -1,25 +1,51 @@
 var win1 = Ti.UI.currentWindow;
-// var messageButton = Ti.UI.createButton(
-//     {
-// 	    systemButton: Titanium.UI.iPhone.SystemButton.ADD
-//     }
-// );
-// messageButton.addEventListener(
-//     'click',
-//     function () {
-//         var messageWindow = Ti.UI.createWindow(
-//             {
-//                 url: 'message_window.js',
-//                 title: 'message',
-//                 backgroundColor: '#fff'
-//             }
-//         );
-//         Ti.UI.currentTab.open(messageWindow);
-//         //messageWindow.open();
-//     }
-// );
-// win1.rightNavButton = messageButton;
 
+if (Titanium.Platform.osname !== 'android') {
+    var messageButton = Ti.UI.createButton(
+        {
+	        systemButton: Titanium.UI.iPhone.SystemButton.ADD
+        }
+    );
+    messageButton.addEventListener(
+        'click',
+        function () {
+            var messageWindow = Ti.UI.createWindow(
+                {
+                    url: 'message_window.js',
+                    title: 'message',
+                    backgroundColor: '#fff'
+                }
+            );
+            Ti.UI.currentTab.open(messageWindow);
+        }
+    );
+    win1.rightNavButton = messageButton;
+} else {
+    win1.activity.onCreateOptionsMenu = function(e) {
+        var menu = e.menu;
+        var menuItem1 = menu.add({ title: "Message",itemId:1 });
+        menuItem1.addEventListener(
+            "click",
+            function(e) {
+                var messageWindow = Ti.UI.createWindow(
+                    {
+                        url: 'message_window.js',
+                        title: 'message',
+                        backgroundColor: '#fff'
+                    }
+                );
+                Ti.UI.currentTab.open(messageWindow);
+            }
+        );
+        var menuItem2 = menu.add({ title: "Search",itemId:2 });
+        menuItem2.addEventListener(
+            "click",
+            function(e) {
+                search.show();
+            }
+        );
+    };
+}
 
 var data = [];
 var tableView = Ti.UI.createTableView({
@@ -100,25 +126,17 @@ function updateTimeline (timeline) {
                 {
                     url: 'tweet_window.js',
                     status_id: tweet.status_id,
-                    screen_name: tweet.user.screen_name,
-                    fullscreen:false
+                    screen_name: tweet.user.screen_name
                 }
             );
-            webWindow.open();
+            Ti.UI.currentTab.open(webWindow);
         }
     );
 }
 
 Ti.include("twitter_settings.js");
 Ti.include("tweet_db.js");
-var path_lib;
-if(Titanium.Platform.osname !== 'android'){
-	path_lib  = 'lib/';
-}
-else{
-	path_lib = 'lib/';
-}
-Ti.include(path_lib + "twitter_api.js");
+Ti.include("lib/twitter_api.js");
 
 //initialization
 Ti.App.twitterApi = new TwitterApi({
@@ -142,43 +160,45 @@ twitterApi.statuses_home_timeline(
 );
 win1.add(tableView);
 
-// var search = Titanium.UI.createSearchBar({
-// 	height:43,
-// 	top:0
-// });
-// win1.add(search);
 
-// search.addEventListener('return', function(e)
-// {
-// 	var query = e.value;
-//     var res = db.searchByScreenName(query);
-//     if (res) {
-//         updateTimeline(res);
-//     }
-// 	search.blur();
-//     search.hide();
-// });
+var search = Titanium.UI.createSearchBar({
+	height:43,
+	top:0
+});
+search.addEventListener('return', function(e)
+{
+	var query = e.value;
+    var res = db.searchByScreenName(query);
+    if (res) {
+        updateTimeline(res);
+    }
+	search.blur();
+    search.hide();
+});
+search.addEventListener('change', function(e)
+{
+    if (e.value.length == 0 ) {
+        updateTimeline(db.savedTweets());
+	    search.blur();
+        search.hide();
+    }
+});
+win1.add(search);
+search.hide();
 
-// search.addEventListener('change', function(e)
-// {
-//     if (e.value.length == 0 ) {
-//         updateTimeline(db.savedTweets());
-// 	    search.blur();
-//         search.hide();
-//     }
-// });
-// search.hide();
+if (Titanium.Platform.osname !== 'android') {
+var searchButton = Ti.UI.createButton(
+    {
+        title: 'search'
+    }
+);
+searchButton.addEventListener(
+    'click',
+    function () {
+        search.show();
+    }
+);
+win1.leftNavButton = searchButton;
+} else {
 
-// var searchButton = Ti.UI.createButton(
-//     {
-//         title: 'search'
-//     }
-// );
-// searchButton.addEventListener(
-//     'click',
-//     function () {
-//         search.show();
-//     }
-// );
-// win1.leftNavButton = searchButton;
-
+}

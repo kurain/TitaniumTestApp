@@ -1,7 +1,7 @@
 // Twitter API Wrapper
-Ti.include(path_lib+'sha1.js');
-Ti.include(path_lib+'oauth.js');
-Ti.include(path_lib+'oauth_adapter.js');
+Ti.include('lib/sha1.js');
+Ti.include('lib/oauth.js');
+Ti.include('lib/oauth_adapter.js');
 
 var TwitterApi = function(params){
   var self = this;

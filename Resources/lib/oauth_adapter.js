@@ -67,8 +67,8 @@
  *
  * Save them locally in a lib subfolder
  */
-Ti.include(path_lib+'sha1.js');
-Ti.include(path_lib+'oauth.js');
+Ti.include('lib/sha1.js');
+Ti.include('lib/oauth.js');
 
 // create an OAuthAdapter instance
 var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
@@ -260,11 +260,9 @@ var OAuthAdapter = function(pConsumerSecret, pConsumerKey, pSignatureMethod)
     {
         Ti.API.debug('authorizeUILoaded');
         var val = webView.evalJS("document.getElementById('oauth_pin').innerHTML");
-        alert(val);
         if( val ){
             var matches = val.match(/\<code\>(\d{1,})\<\/code\>/);
             if (matches && matches[1]) {
-                alert(matches[1]);
                 pin = matches[1];
                 if (receivePinCallback) receivePinCallback();
             }
