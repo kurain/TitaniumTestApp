@@ -199,6 +199,4 @@ searchButton.addEventListener(
     }
 );
 win1.leftNavButton = searchButton;
-} else {
-
 }

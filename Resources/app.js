@@ -12,6 +12,7 @@ var win1 = Titanium.UI.createWindow({
     title:'Tab 1',
     backgroundColor:'#fff'
 });
+win1.hideTabBar();
 
 var tabGroup = Titanium.UI.createTabGroup();
 var tab = Titanium.UI.createTab({  
